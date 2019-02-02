@@ -4,7 +4,7 @@ import SortableTree, {addNodeUnderParent, changeNodeAtPath, insertNode, removeNo
 import axios from '../../axios-primary';
 
 //import * as actions from '../../store/actions';
-import AddOrUpdateCategory from "../../components/AddOrUpdateCategory/ManageCategories";
+import ManageCategory from "../../components/AddOrUpdateCategory/ManageCategory";
 import Button from "../../components/UI/Button/Button";
 import ConfirmationDialog from "../../components/UI/ConfirmationDialog/ConfirmationDialog";
 
@@ -20,12 +20,14 @@ class Categories extends Component {
         nodeType: ''
     };
 
+    // to toggle manage categories modal
     toggleManageCategories = () => {
         this.setState(prevState => (
             {addingCategory: !prevState.addingCategory}
         ));
     };
 
+    // to toggle confirmation dialog
     toggleConfirmationModal = () => {
         this.setState(prevState => (
             {confirmDialogOpened: !prevState.confirmDialogOpened}
@@ -43,22 +45,30 @@ class Categories extends Component {
             });
     }
 
+    // getNodeKey function for SortableTree
     getNodeKey = ({treeIndex}) => treeIndex;
 
+    // handle tree changes, such as expand, collapse
     handleTreeChange = treeData => {
         console.log(treeData, 'treeData');
         this.setState({categories: treeData});
     };
 
+    // when node will be moved
     onMoveNode = data => {
+        // detect if node is becoming root(with no parent) node
         const nextParentNode = data.nextParentNode ? data.nextParentNode : null;
         const nodeData = {
             id: data.node._id,
             parentId: nextParentNode ? nextParentNode._id : null
         };
 
+        // if node is not becoming root node, to get its siblings we have to check its parent's children,
+        // otherwise we have to check root nodes(treeData)
         const siblings = nextParentNode ? nextParentNode.children : data.treeData;
+        // get currently moved node's index in parent to detect its ordering
         const nodeIndexInParent = siblings.findIndex(x => x._id === nodeData.id);
+        // detect prevSiblingId for better ordering performance on server
         nodeData['prevSiblingId'] = nodeIndexInParent > 0 ? siblings[nodeIndexInParent - 1]._id : null;
 
         axios.put('/category/updateCategoryParent', nodeData)
@@ -68,6 +78,7 @@ class Categories extends Component {
     };
 
     onAddNode = (node, path) => {
+        // save state for ManageCategories component
         if (path) { // if node has parent
             this.setState({
                 nodeParentId: node._id,
@@ -88,7 +99,7 @@ class Categories extends Component {
         };
         console.log(newNode, 'newNode');
 
-        if (this.state.nodePath) { // add under parent
+        if (this.state.nodePath) { // if node is not root node, add it under its parent
             this.setState(state => ({
                 categories: addNodeUnderParent({
                     treeData: state.categories,
@@ -98,7 +109,7 @@ class Categories extends Component {
                     newNode: newNode
                 }).treeData
             }), this.toggleManageCategories);
-        } else { // insert new node without parent
+        } else { // if node has no parent, insert as root node
             this.setState(state => ({
                 categories: insertNode({
                     treeData: state.categories,
@@ -116,7 +127,7 @@ class Categories extends Component {
     };
 
     onEditNode = (node, path) => {
-        console.log(node, 'd');
+        // save state for ManageCategories component
         this.setState({
             nodeParentId: node.parentId,
             nodeId: node._id,
@@ -126,6 +137,7 @@ class Categories extends Component {
     };
 
     onNodeUpdated = data => {
+        // change node using SortableTree component's function
         this.setState(state => ({
             categories: changeNodeAtPath({
                 treeData: state.categories,
@@ -145,6 +157,7 @@ class Categories extends Component {
     };
 
     onRemoveNode = (node, path) => {
+        // save state for confirmation dialog
         this.setState({nodePath: path, nodeId: node._id}, this.toggleConfirmationModal);
     };
 
@@ -168,9 +181,11 @@ class Categories extends Component {
     render() {
         return (
             <div>
+                /* button to add new root node */
                 <Button aclass={'btn-success'} clicked={() => this.onAddNode(null)}>Add Category</Button>
 
-                <AddOrUpdateCategory parentId={this.state.nodeParentId}
+                /* Manage Category component, by this I will add or update new node */
+                <ManageCategory parentId={this.state.nodeParentId}
                                      nodeId={this.state.nodeId}
                                      nodeTitle={this.state.nodeTitle}
                                      addingCategory={this.state.addingCategory}
@@ -178,6 +193,7 @@ class Categories extends Component {
                                      onNodeUpdated={data => this.onNodeUpdated(data)}
                                      toggleModal={this.toggleManageCategories}/>
 
+                /* ConfirmationDialog window, to secure user from instant deletion */
                 <ConfirmationDialog show={this.state.confirmDialogOpened}
                                     closeModal={this.toggleConfirmationModal}
                                     acceptModal={this.nodeRemoved}
@@ -185,6 +201,7 @@ class Categories extends Component {
                     Delete this category?
                 </ConfirmationDialog>
 
+                /* SortableTree */
                 <div className='sortable-tree'>
                     <SortableTree
                         treeData={this.state.categories}
@@ -193,13 +210,15 @@ class Categories extends Component {
                         generateNodeProps={({node, path}) => {
                             const primaryClasses = 'rst__moveHandle--color-primary icon-primary';
                             const secondaryClasses = 'rst__moveHandle--color-secondary icon-secondary';
-                            console.log(node.type, 'type');
                             return {
+                                /* buttons to add, edit or remove node */
                                 buttons: [
                                     <button onClick={() => this.onAddNode(node, path)}>Add Child</button>,
                                     <button onClick={() => this.onEditNode(node, path)}>Edit</button>,
                                     <button onClick={() => this.onRemoveNode(node, path)}>Remove</button>
                                 ],
+                                /* className depends on node.type, 'category' types(primary nodes) are color in white-grey,
+                                 'property' types (secondary nodes) are colored in blue */
                                 className: node.type === 'category' ? primaryClasses : secondaryClasses
                             }
                         }}

@@ -5,7 +5,7 @@ import axios from '../../axios-primary';
 import Modal from "../UI/Modal/Modal";
 import DynamicForm from "../DynamicForm/DynamicForm";
 
-class ManageCategories extends React.Component {
+class ManageCategory extends React.Component {
     state = {
         formControls: {
             title: {
@@ -62,7 +62,10 @@ class ManageCategories extends React.Component {
     }*/
 
     onSubmit = formData => {
+        // additionally set parentId
         formData.parentId = this.props.parentId;
+
+        // if node already exists, update it
         if (this.props.nodeId) {
             formData.id = this.props.nodeId;
             axios.put('/category', formData)
@@ -75,7 +78,7 @@ class ManageCategories extends React.Component {
                 .then(res => {
                     this.props.onNodeUpdated(categoryData)
                 })*/
-        } else {
+        } else { // create new node
             console.log(formData, 'formData');
             axios.post('/category', formData)
                 .then(res => {
@@ -146,4 +149,4 @@ const getCategoriesForSelect = createSelector(getCategories, (categories) => {
     return [];
 });*/
 
-export default connect(mapStateToProps, mapDispatchToProps)(ManageCategories);
+export default connect(mapStateToProps, mapDispatchToProps)(ManageCategory);
