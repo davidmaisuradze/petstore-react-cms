@@ -23,10 +23,10 @@ class DynamicForm extends React.Component {
             // if valueType is date, we have to initialize it with moment(), otherwise just an empty string
             let value = defaultValue ? defaultValue : valueType === 'date' ? moment() : '';
 
-            // if we just reopened
             if (prevFormControl && prevFormControl.value) {
                 value = prevFormControl.value;
             } else if (valueType === 'select' && nextFormControl.options && nextFormControl.options.length) {
+                // if valueType is select, default value will be select option's first element's value
                 value = nextFormControl.options[0].value;
             }
 
@@ -74,18 +74,18 @@ class DynamicForm extends React.Component {
 
         const form = formElementsArray.map(formElement => (
             <Input
-                key={formElement.key}
-                options={formElement.config.options}
-                itemKey={formElement.key}
-                elemType={formElement.config.type}
-                shouldValidate={formElement.config.validators}
-                errorMessages={formElement.config.errorMessages}
-                label={formElement.config.label}
-                value={this.state.formControls[formElement.key].value}
-                errors={this.state.formControls[formElement.key].errors}
-                touched={this.state.formControls[formElement.key].isTouched}
-                show={this.state.formControls[formElement.key].show}
-                changed={e => this.onChange(e, formElement.key, formElement.config.type)}
+                key={formElement.key} // key for React
+                options={formElement.config.options} // options array, if type is select
+                itemKey={formElement.key} // key
+                elemType={formElement.config.type} // type
+                shouldValidate={formElement.config.validators} // validators array
+                errorMessages={formElement.config.errorMessages} // errorMessages array
+                label={formElement.config.label} // label
+                value={this.state.formControls[formElement.key].value} // value
+                errors={this.state.formControls[formElement.key].errors} // errors array
+                touched={this.state.formControls[formElement.key].isTouched} // is touched or not, boolean value
+                show={this.state.formControls[formElement.key].show} // show or not, boolean value
+                changed={e => this.onChange(e, formElement.key, formElement.config.type)} // onChange handler function
             />
         ));
 
