@@ -1,0 +1,33 @@
+.sortable-tree {
+  height: 100vh;
+}
+
+.blued {
+  color: blue;
+}
+
+.rst__moveHandle {
+  background-image: none;
+  padding-top: 6px;
+  text-align: center;
+
+  &--color-primary {
+    color: $md-grey-medium;
+  }
+
+  &--color-secondary {
+    color: $md-blue-medium;
+  }
+}
+
+.icon-secondary > .rst__moveHandle::before {
+  content: "\f0c9";
+  color: $md-blue-medium;
+  font: normal normal normal 24px FontAwesome;
+}
+
+.icon-primary > .rst__moveHandle::before {
+  content: "\f0c9";
+  color: $md-white;
+  font: normal normal normal 24px FontAwesome;
+}
