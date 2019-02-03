@@ -1,39 +1,26 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import SortableTree, {addNodeUnderParent, changeNodeAtPath, insertNode, removeNodeAtPath} from 'react-sortable-tree';
-import axios from '../../axios-primary';
-
-//import * as actions from '../../store/actions';
-import ManageCategory from "../../components/AddOrUpdateCategory/ManageCategory";
-import Button from "../../components/UI/Button/Button";
-import ConfirmationDialog from "../../components/UI/ConfirmationDialog/ConfirmationDialog";
 import {
     addNode,
-    editNode,
     moveNode,
     nodeCreated,
-    nodeRemoved,
     nodeUpdated,
-    removeNode
-} from "../../services/sortable-tree.service";
+    editNode, removeNode, nodeRemoved
+} from "../../../services/sortable-tree.service";
+import axios from '../../../axios-primary';
 
-class Categories extends Component {
+import Button from "../../../components/UI/Button/Button";
+import ConfirmationDialog from "../../../components/UI/ConfirmationDialog/ConfirmationDialog";
+
+class Properties extends Component {
     state = {
-        categories: [],
-        addingCategory: false,
+        properties: [],
         confirmDialogOpened: false,
         nodeParentId: null,
         nodePath: null,
         nodeId: null,
-        nodeTitle: '',
-        nodeType: ''
-    };
-
-    // to toggle manage categories modal
-    toggleManageCategories = () => {
-        this.setState(prevState => (
-            {addingCategory: !prevState.addingCategory}
-        ));
+        nodeTitle: ''
     };
 
     // to toggle confirmation dialog
@@ -45,9 +32,9 @@ class Categories extends Component {
 
     componentDidMount() {
         //this.props.onGetCategories();
-        axios.get('/category/getTree')
+        axios.get('/property/getTree/' + this.props.categoryId)
             .then(response => {
-                this.setState({categories: response.data})
+                this.setState({properties: response.data})
             })
             .catch(err => {
                 console.log(err)
@@ -56,36 +43,37 @@ class Categories extends Component {
 
     // handle tree changes, such as expand, collapse
     handleTreeChange = treeData => {
-        this.setState({categories: treeData});
+        this.setState({properties: treeData});
     };
 
     // when node will be moved
     onMoveNode = data => {
         let nodeData = moveNode(data);
+        nodeData['categoryId'] = this.props.categoryId;
 
-        axios.put('/category/updateCategoryParent', nodeData)
+        axios.put('/property/updatePropertyParent', nodeData)
             .then(res => {
                 console.log(res);
-            });
+            }).catch(err => console.log(err));
     };
 
     onAddNode = (node, path) => {
         const stateData = addNode(node, path);
-        this.setState(stateData, this.toggleManageCategories);
+        this.setState(stateData);
     };
 
     onNodeCreated = (data) => {
         const newNode = {
             _id: data._id,
-            title: data.title
+            title: data.title,
+            type: data.type
         };
-        this.setState(state => (nodeCreated('categories', state.categories, newNode, this.state.nodePath)), this.toggleManageCategories);
+        this.setState(state => (nodeCreated('properties', state.properties, newNode, this.state.nodePath)));
     };
 
     onEditNode = (node, path) => {
-        // save state for ManageCategories component
         const stateData = editNode(node, path);
-        this.setState(stateData, this.toggleManageCategories);
+        this.setState(stateData);
     };
 
     onNodeUpdated = data => {
@@ -96,7 +84,7 @@ class Categories extends Component {
             type: data.type
         };
 
-        this.setState(state => (nodeUpdated('categories', state.categories, state.nodePath, newNode)), this.toggleManageCategories);
+        this.setState(state => (nodeUpdated('properties', state.properties, state.nodePath, newNode)));
     };
 
     onRemoveNode = (node, path) => {
@@ -106,9 +94,9 @@ class Categories extends Component {
 
     nodeRemoved = () => {
         //this.props.onRemoveCategory(this.state.nodeId);
-        axios.delete('/category/' + this.state.nodeId)
+        axios.delete('/property/' + this.state.nodeId)
             .then(res => {
-                this.setState(state => (nodeRemoved('categories', state.categories, state.nodePath)), this.toggleConfirmationModal);
+                this.setState(state => (nodeRemoved('properties', state.properties, state.nodePath)), this.toggleConfirmationModal);
             });
     };
 
@@ -117,16 +105,7 @@ class Categories extends Component {
         return (
             <div>
                 {/* button to add new root node */}
-                <Button aclass={'btn-success'} clicked={() => this.onAddNode(null)}>Add Category</Button>
-
-                {/* Manage Category component, by this I will add or update new node */}
-                <ManageCategory parentId={this.state.nodeParentId}
-                                nodeId={this.state.nodeId}
-                                nodeTitle={this.state.nodeTitle}
-                                addingCategory={this.state.addingCategory}
-                                onNodeCreated={e => this.onNodeCreated(e)}
-                                onNodeUpdated={data => this.onNodeUpdated(data)}
-                                toggleModal={this.toggleManageCategories}/>
+                <Button aclass={'btn-success'} clicked={() => this.onAddNode(null)}>Add Property</Button>
 
                 {/* ConfirmationDialog window, to secure user from instant deletion */}
                 <ConfirmationDialog show={this.state.confirmDialogOpened}
@@ -139,7 +118,7 @@ class Categories extends Component {
                 {/* SortableTree */}
                 <div className='sortable-tree'>
                     <SortableTree
-                        treeData={this.state.categories}
+                        treeData={this.state.properties}
                         onChange={treeData => this.handleTreeChange(treeData)}
                         onMoveNode={data => this.onMoveNode(data)}
                         generateNodeProps={({node, path}) => {
@@ -172,4 +151,4 @@ const mapDispatchToProps = dispatch => {
     return {};
 };
 
-export default connect(mapStateToProps, mapDispatchToProps)(Categories);
+export default connect(mapStateToProps, mapDispatchToProps)(Properties);
