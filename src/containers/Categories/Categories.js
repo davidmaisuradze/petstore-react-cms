@@ -1,9 +1,8 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import SortableTree, {addNodeUnderParent, changeNodeAtPath, insertNode, removeNodeAtPath} from 'react-sortable-tree';
+import SortableTree from 'react-sortable-tree';
 import axios from '../../axios-primary';
 
-//import * as actions from '../../store/actions';
 import ManageCategory from "../../components/AddOrUpdateCategory/ManageCategory";
 import Button from "../../components/UI/Button/Button";
 import ConfirmationDialog from "../../components/UI/ConfirmationDialog/ConfirmationDialog";
@@ -25,8 +24,7 @@ class Categories extends Component {
         nodeParentId: null,
         nodePath: null,
         nodeId: null,
-        nodeTitle: '',
-        nodeType: ''
+        nodeTitle: ''
     };
 
     // to toggle manage categories modal
@@ -143,8 +141,6 @@ class Categories extends Component {
                         onChange={treeData => this.handleTreeChange(treeData)}
                         onMoveNode={data => this.onMoveNode(data)}
                         generateNodeProps={({node, path}) => {
-                            const primaryClasses = 'rst__moveHandle--color-primary icon-primary';
-                            const secondaryClasses = 'rst__moveHandle--color-secondary icon-secondary';
                             return {
                                 /* buttons to add, edit or remove node */
                                 buttons: [
@@ -154,7 +150,7 @@ class Categories extends Component {
                                 ],
                                 /* className depends on node.type, 'category' types(primary nodes) are color in white-grey,
                                  'property' types (secondary nodes) are colored in blue */
-                                className: node.type === 'category' ? primaryClasses : secondaryClasses
+                                className: 'rst__moveHandle--color-primary icon-primary'
                             }
                         }}
                     />

@@ -1,17 +1,19 @@
 import React, {Component} from 'react';
 import {connect} from 'react-redux';
-import SortableTree, {addNodeUnderParent, changeNodeAtPath, insertNode, removeNodeAtPath} from 'react-sortable-tree';
+import SortableTree from 'react-sortable-tree';
+import axios from '../../../axios-primary';
+
+import Button from "../../../components/UI/Button/Button";
+import ConfirmationDialog from "../../../components/UI/ConfirmationDialog/ConfirmationDialog";
 import {
     addNode,
     moveNode,
     nodeCreated,
     nodeUpdated,
-    editNode, removeNode, nodeRemoved
+    editNode,
+    removeNode,
+    nodeRemoved
 } from "../../../services/sortable-tree.service";
-import axios from '../../../axios-primary';
-
-import Button from "../../../components/UI/Button/Button";
-import ConfirmationDialog from "../../../components/UI/ConfirmationDialog/ConfirmationDialog";
 
 class Properties extends Component {
     state = {
