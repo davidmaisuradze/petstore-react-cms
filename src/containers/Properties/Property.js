@@ -15,6 +15,7 @@ class Property extends React.Component {
 
     componentDidMount() {
         this.props.onGetProperties();
+        this.props.onGetPropertyAttributes();
     }
 
     toggleManageProperty = () => {
@@ -120,6 +121,7 @@ const mapStateToProps = state => {
 
 const mapDispatchToProps = dispatch => {
     return {
+        onGetPropertyAttributes: () => dispatch(actions.getPropertyAttributes()),
         onGetProperties: () => dispatch(actions.getProperties()),
         onAddProperty: payload => dispatch(actions.createProperty(payload)),
         onEditProperty: payload => dispatch(actions.updateProperty(payload)),

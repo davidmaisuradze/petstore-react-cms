@@ -99,6 +99,7 @@ class DynamicForm extends React.Component {
                     {this.props.children}
                     <div>
                         <button type="submit" className="btn btn-success">Submit</button>
+                        /*dont like this button here*/
                     </div>
                 </form>
             </>

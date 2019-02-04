@@ -41,9 +41,14 @@ class ManageProperty extends React.Component {
     };
 
     onAddAttribute = attribute => {
-        this.setState(state => ({
-            attributes: [attribute, ...state.attributes]
-        }));
+        if (attribute) {
+            const checkAttributeIndex = this.state.attributes.findIndex(x => x._id === attribute._id);
+            if (checkAttributeIndex < 0) {
+                this.setState(state => ({
+                    attributes: [attribute, ...state.attributes]
+                }));
+            }
+        }
     };
 
     onRemoveAttribute = id => {
@@ -64,7 +69,6 @@ class ManageProperty extends React.Component {
                                          defaultValues={this.props.defaultValues}
                                          onSubmit={model => this.onSubmit(model)}>
                                 <Attributes attributes={this.state.attributes}
-                                            propertyAttributes={this.state}
                                             onAdd={attribute => this.onAddAttribute(attribute)}
                                             onRemove={id => this.onRemoveAttribute(id)}
                                 />
@@ -76,13 +80,5 @@ class ManageProperty extends React.Component {
         );
     }
 }
-
-const mapStateToProps = state => {
-    return {};
-};
-
-const mapDispatchToProps = dispatch => {
-    return {};
-};
 
 export default ManageProperty;
