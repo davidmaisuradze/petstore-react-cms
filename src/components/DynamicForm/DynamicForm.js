@@ -96,10 +96,10 @@ class DynamicForm extends React.Component {
 
                 <form onSubmit={e => this.onSubmit(e)}>
                     {form}
-                    <div>
-                        <button type="submit" className="btn btn-auth">Submit</button>
-                    </div>
                     {this.props.children}
+                    <div>
+                        <button type="submit" className="btn btn-success">Submit</button>
+                    </div>
                 </form>
             </>
         );

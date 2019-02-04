@@ -74,8 +74,8 @@ class PasswordRecovery extends Component {
                 <form onSubmit={e => this.onSubmit(e)}>
                     {form}
                     <div>
-                        <button type="submit" className="btn btn-auth">Submit</button>
-                        <button type='button' className='btn btn-auth' onClick={this.goBack}>Cancel</button>
+                        <button type="submit" className="btn btn-success">Submit</button>
+                        <button type='button' className='btn btn-success' onClick={this.goBack}>Cancel</button>
                     </div>
                 </form>
             </>

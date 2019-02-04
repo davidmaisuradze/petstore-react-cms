@@ -23,7 +23,7 @@ class ManageCategory extends React.Component {
                     {label: 'Category', value: 'category'},
                     {label: 'Property', value: 'property'}
                 ]
-            },
+            }/* the example for showDepended select,
             dataType: {
                 label: 'Data Type',
                 type: 'select',
@@ -36,7 +36,7 @@ class ManageCategory extends React.Component {
                     {label: 'Date Range', value: 'dateRange'}
                 ],
                 showDepended: {target: 'type', value: 'property'} // show only if 'type' control's value is 'property'
-            }
+            }*/
         }
     };
 

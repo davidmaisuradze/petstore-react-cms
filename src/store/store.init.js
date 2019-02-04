@@ -1,7 +1,7 @@
 import {applyMiddleware, combineReducers, compose, createStore} from "redux";
 import * as reducers from "./reducers";
 import createSagaMiddleware from "redux-saga";
-import {watchAuth, watchCategory} from "./sagas";
+import {watchAuth, watchCategory, watchProperty, watchPropertyAttribute} from "./sagas";
 
 const composeEnhancers =
     process.env.NODE_ENV === "development"
@@ -11,7 +11,9 @@ const composeEnhancers =
 const rootReducer = combineReducers({
     global: reducers.globalReducer,
     auth: reducers.authReducer,
-    category: reducers.categoryReducer
+    category: reducers.categoryReducer,
+    properties:reducers.propertiesReducer,
+    propertyAttribute: reducers.propertyAttributesReducer
 });
 
 const sagaMiddleware = createSagaMiddleware();
@@ -23,5 +25,7 @@ const store = createStore(
 
 sagaMiddleware.run(watchAuth);
 sagaMiddleware.run(watchCategory);
+sagaMiddleware.run(watchProperty);
+sagaMiddleware.run(watchPropertyAttribute);
 
 export default store;

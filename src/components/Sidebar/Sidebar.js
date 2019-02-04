@@ -17,6 +17,16 @@ class Sidebar extends React.Component {
                 title: 'Categories',
                 iconClass: 'c-teal-500 ti-view-list-alt'
             },
+            properties:{
+                location:'/properties',
+                title: 'Properties',
+                iconClass: 'c-orange-500 ti-layout-list-thumb'
+            },
+            propertyAttributes:{
+              location:'/propertyAttributes',
+              title: 'Property Attributes',
+              iconClass: 'c-orange-500 ti-layout-list-thumb'
+            },
             multiLevel: {
                 location: '/test',
                 title: 'Multiple Level',

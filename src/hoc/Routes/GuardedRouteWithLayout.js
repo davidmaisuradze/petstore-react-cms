@@ -1,16 +1,28 @@
 import React from 'react';
 import {Route, Redirect} from "react-router-dom";
+import {connect} from 'react-redux';
 
-const GuardedRouteWithLayout = ({component: Component, layout: Layout, isAuthenticated, ...rest}) => {
-    console.log(isAuthenticated, 'isAuthenticated');
-    return (
-        <Route
-            {...rest}
-            render={props =>
-                isAuthenticated ? <Layout><Component {...props}/></Layout> : <Redirect to='/signin'/>
-            }
-        />
-    );
+class GuardedRouteWithLayout extends React.Component {
+    render() {
+        console.log(this.props.isAuthenticated, 'isAuthenticated');
+        return (
+            <Route
+                {...this.props.rest}
+                render={props =>
+                    this.props.isAuthenticated ?
+                        <this.props.layout>
+                            <this.props.component {...props}/>
+                        </this.props.layout> : <Redirect to='/signin'/>
+                }
+            />
+        );
+    }
+}
+
+const mapStateToProps = state => {
+    return {
+        isAuthenticated: !!state.auth.token
+    }
 };
 
-export default GuardedRouteWithLayout;
+export default connect(mapStateToProps, null)(GuardedRouteWithLayout);

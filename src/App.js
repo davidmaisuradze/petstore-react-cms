@@ -16,6 +16,8 @@ import {LOCALSTORAGE_TOKEN} from "./constants/global.constants";
 import axios from "./axios-primary";
 import {loginSucceeded} from "./store/actions";
 import ErrorMessage from "./components/UI/ErrorMessage/ErrorMessage";
+import PropertyAttributes from "./containers/PropertyAttributes/PropertyAttributes";
+import Property from "./containers/Properties/Property";
 
 class App extends Component {
     componentDidMount() {
@@ -31,9 +33,11 @@ class App extends Component {
     render() {
         const routes = (
             <Switch>
-                <GuardedRouteWithLayout path='/shop' exact isAuthenticated={this.props.isAuthenticated} layout={Layout}
-                                        component={Shop}/>
-                <RouteWithLayout path='/categories' exact layout={Layout} component={Categories}/>
+                <GuardedRouteWithLayout path='/shop' exact layout={Layout} component={Shop}/>
+                <GuardedRouteWithLayout path='/categories' exact layout={Layout} component={Categories}/>
+                <GuardedRouteWithLayout path='/properties' exact layout={Layout} component={Property}/>
+                <GuardedRouteWithLayout path='/propertyAttributes' exact layout={Layout}
+                                        component={PropertyAttributes}/>
                 <RouteWithLayout path='/signin' exact layout={AuthLayout} component={Login}/>
                 <RouteWithLayout path='/signup' exact layout={AuthLayout} component={Register}/>
                 <RouteWithLayout path='/passwordRecovery' exact layout={AuthLayout} component={PasswordRecovery}/>

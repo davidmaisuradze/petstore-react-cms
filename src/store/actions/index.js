@@ -1,7 +1,7 @@
 // global
 export {
     updateLoading
-} from './global';
+} from './global.actions';
 
 // auth
 export {
@@ -15,10 +15,34 @@ export {
     registerFailed,
     logoutUser,
     logoutSucceeded
-} from './auth';
+} from './auth.actions';
 
 // category
 export {
     getCategories,
     getCategoriesSucceeded
-} from './category';
+} from './category.actions';
+
+// properties
+export {
+    getProperties,
+    getPropertiesSucceeded,
+    createProperty,
+    createPropertySucceeded,
+    updateProperty,
+    updatePropertySucceeded,
+    deleteProperty,
+    deletePropertySucceeded
+} from './properties.actions';
+
+// property attributes
+export {
+    getPropertyAttributes,
+    getPropertyAttributesSucceeded,
+    createPropertyAttribute,
+    createPropertyAttributeSucceeded,
+    updatePropertyAttribute,
+    updatePropertyAttributeSucceeded,
+    deletePropertyAttribute,
+    deletePropertyAttributeSucceeded
+}from './property_attributes.actions';
