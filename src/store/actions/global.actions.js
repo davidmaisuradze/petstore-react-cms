@@ -7,3 +7,10 @@ export const updateLoading = (isActive = true, error = null) => {
         error: error
     };
 };
+
+export const setFormDefaultValues = payload => {
+    return {
+        type: actionTypes.SET_FORM_DEFAULT_VALUES,
+        payload: payload
+    };
+};

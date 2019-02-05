@@ -55,16 +55,9 @@ export const deletePropertyAttributeSucceeded = id => {
     };
 };
 
-export const getPropertyAttributesByPropertyId = propertyId => {
+export const setShowAttribute = show => {
     return {
-        type: actionTypes.GET_PROPERTY_ATTRIBUTES_BY_PROPERTY_ID,
-        propertyId: propertyId
-    };
-};
-
-export const getPropertyAttributesByPropertyIdSucceeded = payload => {
-    return {
-        type: actionTypes.GET_PROPERTY_ATTRIBUTES_BY_PROPERTY_ID_SUCCEEDED,
-        payload: payload
+        type: actionTypes.SET_SHOW_ATTRIBUTES,
+        show: show
     };
 };

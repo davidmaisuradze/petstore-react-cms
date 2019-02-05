@@ -12,7 +12,7 @@ class GuardedRouteWithLayout extends React.Component {
                     this.props.isAuthenticated ?
                         <this.props.layout>
                             <this.props.component {...props}/>
-                        </this.props.layout> : <Redirect to='/signin'/>
+                        </this.props.layout> : <Redirect to={'/signin?returnUrl=' + this.props.location.pathname}/>
                 }
             />
         );

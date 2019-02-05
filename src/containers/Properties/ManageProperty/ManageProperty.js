@@ -1,8 +1,10 @@
 import React from 'react';
-import Modal from "../../../components/UI/Modal/Modal";
+import {connect} from 'react-redux';
 import DynamicForm from "../../../components/DynamicForm/DynamicForm";
 import Attributes from "./Attributes/Attributes";
 import axios from '../../../axios-primary';
+
+import {setShowAttribute} from "../../../store/actions";
 
 class ManageProperty extends React.Component {
     state = {
@@ -19,6 +21,7 @@ class ManageProperty extends React.Component {
                 validators: {required: true},
                 errorMessages: {required: 'required'},
                 options: [
+                    {label: '', value: ''},
                     {label: 'Text', value: 'text'},
                     {label: 'Select', value: 'select'}
                 ]
@@ -26,6 +29,7 @@ class ManageProperty extends React.Component {
         },
         attributes: []
     };
+
 
     componentDidMount() {
         if (this.props.propertyId) {
@@ -38,6 +42,10 @@ class ManageProperty extends React.Component {
 
     onSubmit = formData => {
         this.props.onFormSubmit(formData);
+    };
+
+    onChange = e => {
+        this.props.onSetShowAttributes(e.target.value === 'select');
     };
 
     onAddAttribute = attribute => {
@@ -60,25 +68,40 @@ class ManageProperty extends React.Component {
     render() {
         return (
             <div>
-                <Modal show={this.props.show}
-                       title={'Add Attribute'}
-                       onModalClose={this.props.toggleModal}>
-                    <div className="masonry-item">
-                        <div className="bgc-white p-20 bd">
-                            <DynamicForm formControls={this.state.formControls}
-                                         defaultValues={this.props.defaultValues}
-                                         onSubmit={model => this.onSubmit(model)}>
-                                <Attributes attributes={this.state.attributes}
-                                            onAdd={attribute => this.onAddAttribute(attribute)}
-                                            onRemove={id => this.onRemoveAttribute(id)}
-                                />
-                            </DynamicForm>
-                        </div>
+                <div className="masonry-item">
+                    <div className="bgc-white p-20 bd">
+                        <DynamicForm formControls={this.state.formControls}
+                                     defaultValues={this.props.defaultValues}
+                                     onSubmit={model => this.onSubmit(model)}
+                                     onChange={e => this.onChange(e)}
+                                     onModalClose={this.props.onModalClose}
+                        >
+                            {
+                                this.props.showAttributes ?
+                                    (<Attributes attributes={this.state.attributes}
+                                                 onAdd={attribute => this.onAddAttribute(attribute)}
+                                                 onRemove={id => this.onRemoveAttribute(id)}
+                                    />) : null
+                            }
+                        </DynamicForm>
                     </div>
-                </Modal>
+                </div>
             </div>
         );
     }
 }
 
-export default ManageProperty;
+const mapStateToProps = state => {
+    return {
+        showAttributes: state.propertyAttribute.showAttributes,
+        defaultValues: state.global.formDefaultValues
+    };
+};
+
+const mapDispatchToProps = dispatch => {
+    return {
+        onSetShowAttributes: show => dispatch(setShowAttribute(show))
+    };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(ManageProperty);

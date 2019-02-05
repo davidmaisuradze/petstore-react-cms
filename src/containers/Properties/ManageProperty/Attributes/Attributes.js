@@ -13,26 +13,31 @@ class Attributes extends React.Component {
     };
 
     render() {
-        const attributesDropDown = this.props.allAttributes.map(item => (
-            <option key={item._id} value={item._id}>{item.value}</option>
-        ));
-
-        const attributesList = this.props.attributes.map(item => (
-            <li key={item._id}>{item.value}</li>
-        ));
-
         return (
             <>
                 <div className={'d-flex'}>
                     <select onChange={this.onChange}>
-                        <option></option>
-                        {attributesDropDown}
+                        <option/>
+                        {
+                            this.props.allAttributes.map(item => (
+                                <option key={item._id} value={item._id}>{item.value}</option>
+                            ))
+                        }
                     </select>
-                    <Button aclass={'btn-primary'}
+                    <Button aclass={'btn-primary ml-1'}
                             clicked={() => this.props.onAdd(this.state.selectedPropertyAttribute)}>Add</Button>
                 </div>
-                <ul>
-                    {attributesList}
+
+                <ul className={'list-unstyled'}>
+                    {
+                        this.props.attributes.map(item => (
+                            <li key={item._id}>
+                                <span className={'span-close'}
+                                      onClick={() => this.props.onRemove(item._id)}
+                                >×</span> {item.value}
+                            </li>
+                        ))
+                    }
                 </ul>
             </>
         );

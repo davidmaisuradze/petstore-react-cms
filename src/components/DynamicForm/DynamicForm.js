@@ -1,8 +1,11 @@
 import React from 'react';
 import moment from 'moment';
+import {connect} from 'react-redux';
+import * as actions from '../../store/actions';
 
 import {getFormDataValues, getFormElementsArray, updateFormOnChange, updateObject} from "../../shared/utility";
 import Input from "../UI/Input/Input";
+import Button from "../UI/Button/Button";
 
 class DynamicForm extends React.Component {
     state = {formControls: {}};
@@ -21,14 +24,18 @@ class DynamicForm extends React.Component {
             const valueType = nextFormControl.type;
 
             // if valueType is date, we have to initialize it with moment(), otherwise just an empty string
-            let value = defaultValue ? defaultValue : valueType === 'date' ? moment() : '';
+            let value = '';
 
-            if (prevFormControl && prevFormControl.value) {
+            if (defaultValue) {
+                value = defaultValue;
+            } else if (prevFormControl && prevFormControl.value) {
                 value = prevFormControl.value;
-            } else if (valueType === 'select' && nextFormControl.options && nextFormControl.options.length) {
+            } else if (valueType === 'date') {
+                value = moment();
+            }/*else if (valueType === 'select' && nextFormControl.options && nextFormControl.options.length) {
                 // if valueType is select, default value will be select option's first element's value
                 value = nextFormControl.options[0].value;
-            }
+            }*/
 
             formControl[key] = {
                 value: value,
@@ -52,6 +59,7 @@ class DynamicForm extends React.Component {
         });
 
         const stateData = {formControls: initialState};
+        nextProps.onSetFormDefaultValues();
         return {
             ...stateData
         }
@@ -67,6 +75,9 @@ class DynamicForm extends React.Component {
         const value = type === 'date' ? e : e.target.value;
         const updatedControls = updateFormOnChange(this.state.formControls, this.props.formControls, value, key, type);
         this.setState({formControls: updatedControls});
+        if (this.props.onChange) {
+            this.props.onChange(e);
+        }
     };
 
     render() {
@@ -97,9 +108,14 @@ class DynamicForm extends React.Component {
                 <form onSubmit={e => this.onSubmit(e)}>
                     {form}
                     {this.props.children}
-                    <div>
+                    <div className={'mt-3 d-flex'}>
                         <button type="submit" className="btn btn-success">Submit</button>
-                        /*dont like this button here*/
+                        {/*if form is opened inside modal*/}
+                        {
+                            this.props.onModalClose ? (
+                                <Button aclass={'btn-secondary ml-1'}
+                                        clicked={this.props.onModalClose}>Close</Button>) : null
+                        }
                     </div>
                 </form>
             </>
@@ -107,4 +123,10 @@ class DynamicForm extends React.Component {
     }
 }
 
-export default DynamicForm;
+const mapDispatchToProps = dispatch => {
+    return {
+        onSetFormDefaultValues: (payload = null) => dispatch(actions.setFormDefaultValues(payload))
+    };
+};
+
+export default connect(null, mapDispatchToProps)(DynamicForm);

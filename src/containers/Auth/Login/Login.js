@@ -20,8 +20,15 @@ class Login extends Component {
                 validators: {required: true},
                 errorMessages: {required: 'required'}
             }
-        }
+        },
+        returnUrl: '/'
     };
+
+    componentDidMount() {
+        let search = this.props.location.search;
+        let params = new URLSearchParams(search);
+        this.setState({returnUrl: params.get('returnUrl')});
+    }
 
     onSubmit = formData => {
         this.props.onLogin(formData.email, formData.password)
@@ -33,7 +40,7 @@ class Login extends Component {
     render() {
         return (
             <>
-                {this.props.isAuthenticated ? <Redirect to='/'/> : null}
+                {this.props.isAuthenticated ? <Redirect to={this.state.returnUrl}/> : null}
                 <DynamicForm formControls={this.state.formControls}
                              formTitle={'Login'}
                              onSubmit={model => this.onSubmit(model)}>

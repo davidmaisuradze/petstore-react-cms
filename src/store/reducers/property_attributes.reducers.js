@@ -2,7 +2,8 @@ import * as actionTypes from '../actionTypes';
 
 const initialState = {
     propertyAttributes: [],
-    attributesByPropertyId: []
+    attributesByPropertyId: [],
+    showAttributes: false
 };
 
 const getPropertyAttributesSucceeded = (state, action) => {
@@ -27,8 +28,8 @@ const deletePropertyAttributesSucceeded = (state, action) => {
     return {...state, propertyAttributes: state.propertyAttributes.filter(item => item._id !== action.id)};
 };
 
-const getPropertyAttributesByPropertyIdSucceeded = (state, action) => {
-    return {...state, attributesByPropertyId: action.payload};
+const setShowAttributes = (state, action) => {
+    return {...state, showAttributes: action.show};
 };
 
 export const propertyAttributesReducer = (state = initialState, action) => {
@@ -41,6 +42,8 @@ export const propertyAttributesReducer = (state = initialState, action) => {
             return updatePropertyAttributesSucceeded(state, action);
         case actionTypes.DELETE_PROPERTY_ATTRIBUTE_SUCCEEDED:
             return deletePropertyAttributesSucceeded(state, action);
+        case actionTypes.SET_SHOW_ATTRIBUTES:
+            return setShowAttributes(state, action);
         default:
             return state;
     }

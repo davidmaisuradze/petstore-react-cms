@@ -21,13 +21,19 @@ const Modal = (props) => {
 
                         <div className="modal-body">{props.children}</div>
 
-                        <div className="modal-footer">
-                            <Button aclass={'btn-secondary'} clicked={props.onModalClose}>Close</Button>
-                            {props.onModalAccept ?
-                                (<Button aclass={'btn-primary'} clicked={props.onModalAccept}>Save changes</Button>)
-                                : null
-                            }
-                        </div>
+                        {
+                            props.needFooter === false ?
+                                null :
+                                (<div className="modal-footer">
+                                    <Button aclass={'btn-secondary'} clicked={props.onModalClose}>
+                                        {props.denyText?props.denyText:'Cancel'}
+                                    </Button>
+
+                                    <Button aclass={'btn-primary'} clicked={props.onModalAccept}>
+                                        {props.confirmationText ? props.confirmationText : 'Submit'}
+                                    </Button>
+                                </div>)
+                        }
                     </div>
                 </div>
             </div>

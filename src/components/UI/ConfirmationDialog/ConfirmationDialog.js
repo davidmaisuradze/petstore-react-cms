@@ -6,6 +6,8 @@ const ConfirmationDialog = props => (
            title={'Are you sure?'}
            onModalClose={props.closeModal}
            onModalAccept={props.acceptModal}
+           confirmationText={'Yes'}
+           denyText={'No'}
     >
         {props.children}
     </Modal>

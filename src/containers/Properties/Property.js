@@ -4,12 +4,12 @@ import * as actions from '../../store/actions';
 import Button from "../../components/UI/Button/Button";
 import ManageProperty from "./ManageProperty/ManageProperty";
 import ConfirmationDialog from "../../components/UI/ConfirmationDialog/ConfirmationDialog";
+import Modal from "../../components/UI/Modal/Modal";
 
 class Property extends React.Component {
     state = {
         addingProperty: false,
         propertyId: null,
-        formDefaultValues: null,
         confirmationDialogOpened: false
     };
 
@@ -31,23 +31,19 @@ class Property extends React.Component {
     };
 
     onPropertyEdit = item => {
-        this.setState({
-            propertyId: item._id,
-            formDefaultValues: {title: item.title, type: item.type}
-        }, this.toggleManageProperty);
+        this.props.onSetFormDefaultValues({title: item.title, type: item.type});
+        this.props.onSetShowAttributes(item.type === 'select');
+        this.toggleManageProperty();
     };
 
     onFormSubmit = data => {
         if (this.state.propertyId) {
-            console.log(data, 'edit');
             data.id = this.state.propertyId;
-
             this.props.onEditProperty(data);
-            this.setState({propertyId: null, formDefaultValues: null}, this.toggleManageProperty);
         } else {
             this.props.onAddProperty(data);
-            this.toggleManageProperty();
         }
+        this.setState({propertyId: null, formDefaultValues: null}, this.toggleManageProperty);
     };
 
     onPropertyDelete = id => {
@@ -60,21 +56,7 @@ class Property extends React.Component {
     };
 
     render() {
-        const tableBody = this.props.properties.map((item, index) =>
-            (
-                <tr key={item._id}>
-                    <td>{index + 1}</td>
-                    <td>{item.title}</td>
-                    <td>{item.type}</td>
-                    <td className={'d-flex'}>
-                        <Button aclass={'btn-primary mr-1'} clicked={() => this.onPropertyEdit(item)}>edit</Button>
-                        <Button aclass={'btn-danger'} clicked={() => this.onPropertyDelete(item._id)}>delete</Button>
-                    </td>
-                </tr>
-            )
-        );
-
-        const table = tableBody && tableBody.length ? (
+        const table = this.props.properties && this.props.properties ? (
             <table className='table table-striped'>
                 <thead>
                 <tr>
@@ -84,21 +66,39 @@ class Property extends React.Component {
                     <th>Actions</th>
                 </tr>
                 </thead>
-                <tbody>{tableBody}</tbody>
+                <tbody>
+                {this.props.properties.map((item, index) =>
+                    (
+                        <tr key={item._id}>
+                            <td>{index + 1}</td>
+                            <td>{item.title}</td>
+                            <td>{item.type}</td>
+                            <td className={'d-flex'}>
+                                <Button aclass={'btn-primary mr-1'}
+                                        clicked={() => this.onPropertyEdit(item)}>edit</Button>
+                                <Button aclass={'btn-danger'}
+                                        clicked={() => this.onPropertyDelete(item._id)}>delete</Button>
+                            </td>
+                        </tr>
+                    )
+                )}
+                </tbody>
             </table>
         ) : 'no entries found';
-
-        console.log(this.state, 'state');
 
         return (
             <>
                 <Button aclass={'btn-success'} clicked={this.toggleManageProperty}>Add New</Button>
 
-                <ManageProperty propertyId={this.state.propertyId}
-                                show={this.state.addingProperty}
-                                defaultValues={this.state.formDefaultValues}
-                                onFormSubmit={(data) => this.onFormSubmit(data)}
-                                toggleModal={this.toggleManageProperty}/>
+                <Modal show={this.state.addingProperty}
+                       title={'Add Property'}
+                       onModalClose={this.toggleManageProperty}
+                       needFooter={false}>
+                    <ManageProperty propertyId={this.state.propertyId}
+                                    defaultValues={this.state.formDefaultValues}
+                                    onFormSubmit={(data) => this.onFormSubmit(data)}
+                                    onModalClose={this.toggleManageProperty}/>
+                </Modal>
 
                 <ConfirmationDialog show={this.state.confirmationDialogOpened}
                                     closeModal={this.toggleConfirmationModal}
@@ -115,7 +115,8 @@ class Property extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        properties: state.properties.properties
+        properties: state.properties.properties,
+        formDefaultValues: state.global.formDefaultValues
     };
 };
 
@@ -125,7 +126,9 @@ const mapDispatchToProps = dispatch => {
         onGetProperties: () => dispatch(actions.getProperties()),
         onAddProperty: payload => dispatch(actions.createProperty(payload)),
         onEditProperty: payload => dispatch(actions.updateProperty(payload)),
-        onDeleteProperty: id => dispatch(actions.deleteProperty(id))
+        onDeleteProperty: id => dispatch(actions.deleteProperty(id)),
+        onSetShowAttributes: show => dispatch(actions.setShowAttribute(show)),
+        onSetFormDefaultValues: payload => dispatch(actions.setFormDefaultValues(payload))
     };
 };
 
