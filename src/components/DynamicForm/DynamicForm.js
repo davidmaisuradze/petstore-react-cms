@@ -11,11 +11,12 @@ class DynamicForm extends React.Component {
     state = {formControls: {}};
 
     static getDerivedStateFromProps(nextProps, prevState) {
+        console.log(nextProps,'nextProps');
         const nextFormControls = nextProps.formControls;
         const nextFormControlKeys = Object.keys(nextFormControls);
         let initialState = nextFormControlKeys.reduce((formControl, key) => {
             // default values, passed as props from parent
-            const defaultValue = nextProps.defaultValues ? nextProps.defaultValues[key] : null;
+            const defaultValue = nextProps.formDefaultValues ? nextProps.formDefaultValues[key] : null;
             // previous controls
             const prevFormControl = prevState.formControls[key];
             // next controls
@@ -36,6 +37,8 @@ class DynamicForm extends React.Component {
                 // if valueType is select, default value will be select option's first element's value
                 value = nextFormControl.options[0].value;
             }*/
+
+            console.log(value, 'value');
 
             formControl[key] = {
                 value: value,

@@ -9,8 +9,8 @@ import Modal from "../../components/UI/Modal/Modal";
 class Property extends React.Component {
     state = {
         addingProperty: false,
-        propertyId: null,
-        confirmationDialogOpened: false
+        confirmationDialogOpened: false,
+        propertyId: null
     };
 
     componentDidMount() {
@@ -30,15 +30,23 @@ class Property extends React.Component {
         }));
     };
 
+    onPropertyAdd = () => {
+        this.props.onResetPropertyAttributes();
+        this.props.onSetFormDefaultValues({title: '', type: ''});
+        this.setState({propertyId: null}, this.toggleManageProperty);
+    };
+
     onPropertyEdit = item => {
+        this.props.onGetPropertyAttributesByPropertyId(item._id);
         this.props.onSetFormDefaultValues({title: item.title, type: item.type});
         this.props.onSetShowAttributes(item.type === 'select');
-        this.toggleManageProperty();
+        this.setState({propertyId: item._id}, this.toggleManageProperty);
     };
 
     onFormSubmit = data => {
         if (this.state.propertyId) {
             data.id = this.state.propertyId;
+            data.attributes = this.props.attributesByPropertyId.map(item => item._id);
             this.props.onEditProperty(data);
         } else {
             this.props.onAddProperty(data);
@@ -88,15 +96,13 @@ class Property extends React.Component {
 
         return (
             <>
-                <Button aclass={'btn-success'} clicked={this.toggleManageProperty}>Add New</Button>
+                <Button aclass={'btn-success'} clicked={this.onPropertyAdd}>Add New</Button>
 
                 <Modal show={this.state.addingProperty}
                        title={'Add Property'}
                        onModalClose={this.toggleManageProperty}
                        needFooter={false}>
-                    <ManageProperty propertyId={this.state.propertyId}
-                                    defaultValues={this.state.formDefaultValues}
-                                    onFormSubmit={(data) => this.onFormSubmit(data)}
+                    <ManageProperty onFormSubmit={(data) => this.onFormSubmit(data)}
                                     onModalClose={this.toggleManageProperty}/>
                 </Modal>
 
@@ -116,13 +122,15 @@ class Property extends React.Component {
 const mapStateToProps = state => {
     return {
         properties: state.properties.properties,
-        formDefaultValues: state.global.formDefaultValues
+        attributesByPropertyId: state.propertyAttribute.attributesByPropertyId
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
         onGetPropertyAttributes: () => dispatch(actions.getPropertyAttributes()),
+        onGetPropertyAttributesByPropertyId: id => dispatch(actions.getPropertyAttributesByPropertyId(id)),
+        onResetPropertyAttributes: () => dispatch(actions.resetAttributesByPropertyId()),
         onGetProperties: () => dispatch(actions.getProperties()),
         onAddProperty: payload => dispatch(actions.createProperty(payload)),
         onEditProperty: payload => dispatch(actions.updateProperty(payload)),

@@ -13,6 +13,7 @@ class Attributes extends React.Component {
     };
 
     render() {
+        console.log(this.props.attributes,'attributes');
         return (
             <>
                 <div className={'d-flex'}>

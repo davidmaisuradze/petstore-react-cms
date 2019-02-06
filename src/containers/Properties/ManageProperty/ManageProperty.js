@@ -2,11 +2,9 @@ import React from 'react';
 import {connect} from 'react-redux';
 import DynamicForm from "../../../components/DynamicForm/DynamicForm";
 import Attributes from "./Attributes/Attributes";
-import axios from '../../../axios-primary';
+import * as actions from '../../../store/actions';
 
-import {setShowAttribute} from "../../../store/actions";
-
-class ManageProperty extends React.Component {
+class ManageProperty extends React.PureComponent {
     state = {
         formControls: {
             title: {
@@ -26,43 +24,28 @@ class ManageProperty extends React.Component {
                     {label: 'Select', value: 'select'}
                 ]
             }
-        },
-        attributes: []
-    };
-
-
-    componentDidMount() {
-        if (this.props.propertyId) {
-            axios.get('/property/getPropertyAttributesByPropertyId/' + this.props.propertyId)
-                .then(response => {
-                    this.setState({attributes: response.data});
-                });
         }
-    }
+    };
 
     onSubmit = formData => {
         this.props.onFormSubmit(formData);
     };
 
     onChange = e => {
-        this.props.onSetShowAttributes(e.target.value === 'select');
+        const element = e.target;
+        if (element.name === 'type') {
+            this.props.onSetShowAttributes(element.value === 'select');
+        }
     };
 
     onAddAttribute = attribute => {
         if (attribute) {
-            const checkAttributeIndex = this.state.attributes.findIndex(x => x._id === attribute._id);
-            if (checkAttributeIndex < 0) {
-                this.setState(state => ({
-                    attributes: [attribute, ...state.attributes]
-                }));
-            }
+            this.props.onAddAttributesByPropertyId(attribute);
         }
     };
 
     onRemoveAttribute = id => {
-        this.setState(state => ({
-            attributes: state.attributes.filter(x => x._id !== id)
-        }));
+        this.props.onRemoveAttributesByPropertyId(id);
     };
 
     render() {
@@ -70,15 +53,15 @@ class ManageProperty extends React.Component {
             <div>
                 <div className="masonry-item">
                     <div className="bgc-white p-20 bd">
-                        <DynamicForm formControls={this.state.formControls}
-                                     defaultValues={this.props.defaultValues}
+                        <DynamicForm formDefaultValues={this.props.formDefaultValues}
+                                     formControls={this.state.formControls}
                                      onSubmit={model => this.onSubmit(model)}
                                      onChange={e => this.onChange(e)}
                                      onModalClose={this.props.onModalClose}
                         >
                             {
                                 this.props.showAttributes ?
-                                    (<Attributes attributes={this.state.attributes}
+                                    (<Attributes attributes={this.props.attributesByPropertyId}
                                                  onAdd={attribute => this.onAddAttribute(attribute)}
                                                  onRemove={id => this.onRemoveAttribute(id)}
                                     />) : null
@@ -94,13 +77,17 @@ class ManageProperty extends React.Component {
 const mapStateToProps = state => {
     return {
         showAttributes: state.propertyAttribute.showAttributes,
-        defaultValues: state.global.formDefaultValues
+        defaultValues: state.global.formDefaultValues,
+        attributesByPropertyId: state.propertyAttribute.attributesByPropertyId,
+        formDefaultValues: state.global.formDefaultValues
     };
 };
 
 const mapDispatchToProps = dispatch => {
     return {
-        onSetShowAttributes: show => dispatch(setShowAttribute(show))
+        onSetShowAttributes: show => dispatch(actions.setShowAttribute(show)),
+        onAddAttributesByPropertyId: item => dispatch(actions.addAttributesByPropertyId(item)),
+        onRemoveAttributesByPropertyId: id => dispatch(actions.removeAttributesByPropertyId(id))
     };
 };
 

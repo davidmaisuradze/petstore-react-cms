@@ -61,3 +61,37 @@ export const setShowAttribute = show => {
         show: show
     };
 };
+
+export const getPropertyAttributesByPropertyId = id => {
+    return {
+        type: actionTypes.GET_PROPERTY_ATTRIBUTES_BY_PROPERTY_ID,
+        id: id
+    };
+};
+
+export const getPropertyAttributesByPropertyIdSucceeded = payload => {
+    return {
+        type: actionTypes.GET_PROPERTY_ATTRIBUTES_BY_PROPERTY_ID_SUCCEEDED,
+        payload: payload
+    };
+};
+
+export const resetAttributesByPropertyId = () => {
+    return {
+        type: actionTypes.RESET_ATTRIBUTES_BY_PROPERTY_ID
+    };
+};
+
+export const addAttributesByPropertyId = attribute => {
+    return {
+        type: actionTypes.ADD_ATTRIBUTES_BY_PROPERTY_ID,
+        attribute: attribute
+    };
+};
+
+export const removeAttributesByPropertyId = id => {
+    return {
+        type: actionTypes.REMOVE_ATTRIBUTES_BY_PROPERTY_ID,
+        id: id
+    };
+};

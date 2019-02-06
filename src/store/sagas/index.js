@@ -7,7 +7,8 @@ import {
     createPropertyAttribute,
     deletePropertyAttribute,
     getPropertyAttributes,
-    updatePropertyAttribute
+    updatePropertyAttribute,
+    getPropertyAttributesByPropertyId
 } from "./property-attributes.sagas";
 import {createProperty, deleteProperty, getProperties, updateProperty} from "./properties.sagas";
 
@@ -43,6 +44,7 @@ export function* watchPropertyAttribute() {
         takeEvery(actionTypes.GET_PROPERTY_ATTRIBUTES, getPropertyAttributes),
         takeEvery(actionTypes.CREATE_PROPERTY_ATTRIBUTE, createPropertyAttribute),
         takeEvery(actionTypes.UPDATE_PROPERTY_ATTRIBUTE, updatePropertyAttribute),
-        takeEvery(actionTypes.DELETE_PROPERTY_ATTRIBUTE, deletePropertyAttribute)
+        takeEvery(actionTypes.DELETE_PROPERTY_ATTRIBUTE, deletePropertyAttribute),
+        takeEvery(actionTypes.GET_PROPERTY_ATTRIBUTES_BY_PROPERTY_ID, getPropertyAttributesByPropertyId)
     ]);
 }

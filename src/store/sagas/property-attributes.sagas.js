@@ -37,3 +37,12 @@ export function* deletePropertyAttribute(action) {
         console.log(err, 'propertyAttributeSagaErr');
     }
 }
+
+export function* getPropertyAttributesByPropertyId(action) {
+    try {
+        const response = yield axios.get('/propertyAttribute/getPropertyAttributesByPropertyId/' + action.id);
+        yield put(actions.getPropertyAttributesByPropertyIdSucceeded(response.data));
+    } catch (err) {
+        console.log(err, 'propertyAttributeSagaErr');
+    }
+}

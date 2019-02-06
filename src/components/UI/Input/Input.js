@@ -133,6 +133,7 @@ class Input extends React.Component {
                                 {this.props.label}
                             </label>
                             <select className={'form-control ' + errorClass}
+                                    name={this.props.itemKey}
                                     onChange={this.props.changed}
                                     value={this.props.value}
                             >
