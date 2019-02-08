@@ -9,7 +9,6 @@ class PropertyAttributes extends React.Component {
     state = {
         addingAttribute: false,
         attributeId: null,
-        formDefaultValues: null,
         confirmationDialogOpened: false
     };
 
@@ -29,20 +28,22 @@ class PropertyAttributes extends React.Component {
         }));
     };
 
+    onAttributeAdd = () => {
+        this.props.onSetFormDefaultValues({value: '', type: ''});
+        this.toggleManageAttribute();
+    };
+
     onAttributeEdit = item => {
-        this.setState({
-            attributeId: item._id,
-            formDefaultValues: {value: item.value, type: item.type}
-        }, this.toggleManageAttribute);
+        this.props.onSetFormDefaultValues({value: item.value, type: item.type});
+        this.setState({attributeId: item._id}, this.toggleManageAttribute);
     };
 
     onFormSubmit = data => {
+        console.log(data, 'dataaaaaaaaaaaaaaaa');
         if (this.state.attributeId) {
-            console.log(data, 'edit');
             data.id = this.state.attributeId;
-
             this.props.onEditAttribute(data);
-            this.setState({attributeId: null, formDefaultValues: null}, this.toggleManageAttribute);
+            this.toggleManageAttribute();
         } else {
             this.props.onAddAttribute(data);
             this.toggleManageAttribute();
@@ -87,16 +88,14 @@ class PropertyAttributes extends React.Component {
             </table>
         ) : 'no entries found';
 
-        console.log(this.state, 'state');
-
         return (
             <>
-                <Button aclass={'btn-success'} clicked={this.toggleManageAttribute}>Add New</Button>
+                <Button aclass={'btn-success'} clicked={this.onAttributeAdd}>Add New</Button>
 
-                <ManageAttribute show={this.state.addingAttribute}
-                                 defaultValues={this.state.formDefaultValues}
-                                 onFormSubmit={(data) => this.onFormSubmit(data)}
-                                 toggleModal={this.toggleManageAttribute}/>
+                <ManageAttribute onFormSubmit={(data) => this.onFormSubmit(data)}
+                                 show={this.state.addingAttribute}
+                                 toggleModal={this.toggleManageAttribute}
+                />
 
                 <ConfirmationDialog show={this.state.confirmationDialogOpened}
                                     closeModal={this.toggleConfirmationModal}
@@ -122,7 +121,8 @@ const mapDispatchToProps = dispatch => {
         onGetPropertyAttributes: () => dispatch(actions.getPropertyAttributes()),
         onAddAttribute: payload => dispatch(actions.createPropertyAttribute(payload)),
         onEditAttribute: payload => dispatch(actions.updatePropertyAttribute(payload)),
-        onDeleteAttribute: id => dispatch(actions.deletePropertyAttribute(id))
+        onDeleteAttribute: id => dispatch(actions.deletePropertyAttribute(id)),
+        onSetFormDefaultValues: payload => dispatch(actions.setFormDefaultValues(payload))
     };
 };
 

@@ -2,7 +2,6 @@ import * as actionTypes from '../actionTypes';
 
 const initialState = {
     propertyAttributes: [],
-    attributesByPropertyId: [],
     showAttributes: false
 };
 
@@ -32,26 +31,6 @@ const setShowAttributes = (state, action) => {
     return {...state, showAttributes: action.show};
 };
 
-const getPropertyAttributesByPropertyIdSucceeded = (state, action) => {
-    return {...state, attributesByPropertyId: action.payload};
-};
-
-const addAttributesByPropertyId = (state, action) => {
-    const checkAttributeIndex = state.attributesByPropertyId.findIndex(x => x._id === action.attribute._id);
-    if (checkAttributeIndex < 0) {
-        return {...state, attributesByPropertyId: [...state.attributesByPropertyId, action.attribute]};
-    }
-    return state;
-};
-
-const removeAttributesByPropertyId = (state, action) => {
-    return {...state, attributesByPropertyId: state.attributesByPropertyId.filter(item => item._id !== action.id)};
-};
-
-const resetAttributesByPropertyId = (state, action) => {
-    return {...state, attributesByPropertyId: []};
-};
-
 export const propertyAttributesReducer = (state = initialState, action) => {
     switch (action.type) {
         case actionTypes.GET_PROPERTY_ATTRIBUTES_SUCCEEDED:
@@ -64,14 +43,6 @@ export const propertyAttributesReducer = (state = initialState, action) => {
             return deletePropertyAttributesSucceeded(state, action);
         case actionTypes.SET_SHOW_ATTRIBUTES:
             return setShowAttributes(state, action);
-        case actionTypes.GET_PROPERTY_ATTRIBUTES_BY_PROPERTY_ID_SUCCEEDED:
-            return getPropertyAttributesByPropertyIdSucceeded(state, action);
-        case actionTypes.ADD_ATTRIBUTES_BY_PROPERTY_ID:
-            return addAttributesByPropertyId(state, action);
-        case actionTypes.REMOVE_ATTRIBUTES_BY_PROPERTY_ID:
-            return removeAttributesByPropertyId(state, action);
-        case actionTypes.RESET_ATTRIBUTES_BY_PROPERTY_ID:
-            return resetAttributesByPropertyId(state, action);
         default:
             return state;
     }

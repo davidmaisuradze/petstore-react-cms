@@ -47,9 +47,5 @@ export {
     deletePropertyAttribute,
     deletePropertyAttributeSucceeded,
     setShowAttribute,
-    getPropertyAttributesByPropertyId,
-    getPropertyAttributesByPropertyIdSucceeded,
-    addAttributesByPropertyId,
-    removeAttributesByPropertyId,
-    resetAttributesByPropertyId
+    getPropertyAttributesByPropertyId
 }from './property_attributes.actions';

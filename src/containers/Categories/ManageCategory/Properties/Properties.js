@@ -2,14 +2,14 @@ import React from 'react';
 import {connect} from 'react-redux';
 import Button from "../../../../components/UI/Button/Button";
 
-class Attributes extends React.Component {
+class Properties extends React.Component {
     state = {
-        selectedPropertyAttribute: ''
+        selectedItem: null
     };
 
     onChange = e => {
-        const attribute = this.props.allAttributes.find(x => x._id === e.target.value);
-        this.setState({selectedPropertyAttribute: attribute});
+        const property = this.props.properties.find(x => x._id === e.target.value);
+        this.setState({selectedItem: property});
     };
 
     render() {
@@ -19,22 +19,22 @@ class Attributes extends React.Component {
                     <select onChange={this.onChange}>
                         <option/>
                         {
-                            this.props.allAttributes.map(item => (
-                                <option key={item._id} value={item._id}>{item.value}</option>
+                            this.props.properties.map(item => (
+                                <option key={item._id} value={item._id}>{item.title}</option>
                             ))
                         }
                     </select>
                     <Button aclass={'btn-primary ml-1'}
-                            clicked={() => this.props.onAdd(this.state.selectedPropertyAttribute)}>Add</Button>
+                            clicked={() => this.props.onAdd(this.state.selectedItem)}>Add</Button>
                 </div>
 
                 <ul className={'list-unstyled'}>
                     {
-                        this.props.attributes.map(item => (
+                        this.props.categoryProperties.map(item => (
                             <li key={item._id}>
                                 <span className={'span-close'}
                                       onClick={() => this.props.onRemove(item._id)}
-                                >×</span> {item.value}
+                                >×</span> {item.title}
                             </li>
                         ))
                     }
@@ -46,8 +46,8 @@ class Attributes extends React.Component {
 
 const mapStateToProps = state => {
     return {
-        allAttributes: state.propertyAttribute.propertyAttributes
+        properties: state.property.properties
     };
 };
 
-export default connect(mapStateToProps, null)(Attributes);
+export default connect(mapStateToProps, null)(Properties);

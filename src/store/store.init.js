@@ -12,7 +12,7 @@ const rootReducer = combineReducers({
     global: reducers.globalReducer,
     auth: reducers.authReducer,
     category: reducers.categoryReducer,
-    properties:reducers.propertiesReducer,
+    property:reducers.propertiesReducer,
     propertyAttribute: reducers.propertyAttributesReducer
 });
 

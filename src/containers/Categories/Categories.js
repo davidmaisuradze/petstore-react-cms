@@ -2,8 +2,9 @@ import React, {Component} from 'react';
 import {connect} from 'react-redux';
 import SortableTree from 'react-sortable-tree';
 import axios from '../../axios-primary';
+import * as actions from '../../store/actions';
 
-import ManageCategory from "../../components/AddOrUpdateCategory/ManageCategory";
+import ManageCategory from "./ManageCategory/ManageCategory";
 import Button from "../../components/UI/Button/Button";
 import ConfirmationDialog from "../../components/UI/ConfirmationDialog/ConfirmationDialog";
 import {
@@ -45,11 +46,13 @@ class Categories extends Component {
         //this.props.onGetCategories();
         axios.get('/category/getTree')
             .then(response => {
-                this.setState({categories: response.data})
+                this.setState({categories: response.data});
             })
             .catch(err => {
                 console.log(err)
             });
+
+        this.props.onGetProperties();
     }
 
     // handle tree changes, such as expand, collapse
@@ -69,6 +72,7 @@ class Categories extends Component {
 
     onAddNode = (node, path) => {
         const stateData = addNode(node, path);
+        this.props.onSetFormDefaultValues({title: ''});
         this.setState(stateData, this.toggleManageCategories);
     };
 
@@ -83,6 +87,7 @@ class Categories extends Component {
     onEditNode = (node, path) => {
         // save state for ManageCategories component
         const stateData = editNode(node, path);
+        this.props.onSetFormDefaultValues({title: node.title});
         this.setState(stateData, this.toggleManageCategories);
     };
 
@@ -118,13 +123,14 @@ class Categories extends Component {
                 <Button aclass={'btn-success'} clicked={() => this.onAddNode(null)}>Add Category</Button>
 
                 {/* Manage Category component, by this I will add or update new node */}
-                <ManageCategory parentId={this.state.nodeParentId}
-                                nodeId={this.state.nodeId}
-                                nodeTitle={this.state.nodeTitle}
-                                addingCategory={this.state.addingCategory}
-                                onNodeCreated={e => this.onNodeCreated(e)}
-                                onNodeUpdated={data => this.onNodeUpdated(data)}
-                                toggleModal={this.toggleManageCategories}/>
+                {this.state.addingCategory ?
+                    (<ManageCategory parentId={this.state.nodeParentId}
+                                     nodeId={this.state.nodeId}
+                                     nodeTitle={this.state.nodeTitle}
+                                     onNodeCreated={e => this.onNodeCreated(e)}
+                                     onNodeUpdated={data => this.onNodeUpdated(data)}
+                                     toggleModal={this.toggleManageCategories}/>) : null
+                }
 
                 {/* ConfirmationDialog window, to secure user from instant deletion */}
                 <ConfirmationDialog show={this.state.confirmDialogOpened}
@@ -165,7 +171,10 @@ const mapStateToProps = state => {
 };
 
 const mapDispatchToProps = dispatch => {
-    return {};
+    return {
+        onGetProperties: () => dispatch(actions.getProperties()),
+        onSetFormDefaultValues: payload => dispatch(actions.setFormDefaultValues(payload))
+    };
 };
 
 export default connect(mapStateToProps, mapDispatchToProps)(Categories);
